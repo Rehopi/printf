@@ -1,36 +1,41 @@
-#ifndef MAIN_H
-#define MAIN_H
-#include <stdio.h>
-#include <stdarg.h>
+#ifndef _MAIN_H_
+#define _MAIN_H_
+
 #include <stdlib.h>
 #include <unistd.h>
+#include <stdarg.h>
+#include <stdio.h>
 
 /**
- * struct specifier - structure that redirects to other functions.
- *
- * @sp: My pointer to character for make match and select which functions call.
- * @f: My pointer to function.
+ * struct print - structure for printing various types
+ *  @t: type to print
+ *  @f: function to print
  */
-typedef struct specifier
+typedef struct print
 {
-char *sp;
-int (*f)();
-} myforspec;
+	char *t;
+	int (*f)(va_list);
+} print_t;
 
-/*Auxiliar functions*/
-int _strlen(char *str);
-int _printf(char *format, ...);
-void moveinto_buffer(char *buffer, char c, int *count);
-char *convert(unsigned int num, int base);
+/* _putchar */
+int _putchar(char c);
 
-/*Operations of my structure*/
-int _printchar(va_list valist, char *buffer, int *i);
-int printint(va_list valist, char *buffer, int *i);
-int printstr(va_list valist, char *buffer, int *i);
-int printhexa(va_list valist, char *buffer, int *i);
-int printoctal(va_list valist, char *buffer, int *i);
-int printbin(va_list valist, char *buffer, int *i);
-int printunsigned(va_list valist, char *buffer, int *count);
-int PPS(char *buffer, int *count);
-int capitalize(va_list valist, char *buffer, int *count);
+int arg_printer(va_list arg_ptr, const char *format);
+int print_str(va_list arg_ptr);
+int print_num(unsigned int n, int c);
+int print_int(va_list arg_ptr);
+int print_rot13(va_list arg_ptr);
+int print_u(va_list arg_ptr);
+int print_o(va_list arg_ptr);
+int print_b(va_list arg_ptr);
+int print_x(va_list arg_ptr);
+int print_X(va_list arg_ptr);
+int print_p(va_list arg_ptr);
+int print_S(va_list arg_ptr);
+int print_r(va_list arg_ptr);
+
+/* _printf */
+int _printf(const char *format, ...);
+
 #endif
+
