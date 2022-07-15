@@ -1,50 +1,96 @@
 #include "main.h"
 
 /**
- * _printf - prints formatted data to stdout
- * @format: string that contains the format to print
- * Return: number of characters written
+ * arg_printer - find a way to print according to the given format
+ * @format: possible format specifier
+ * @args: pointer to the arguments
+ * Return: The number of characters printed
  */
-int _printf(char *format, ...)
+int arg_printer(va_list args, const char *format)
 {
-int written = 0, (*structype)(char *, va_list);
-char q[3];
-va_list pa;
+	int i, so_len = 0;
+	char c;
 
-if (format == NULL)
-return (-1);
-q[2] = '\0';
-va_start(pa, format);
-_putchar(-1);
-while (format[0])
-{
-if (format[0] == '%')
-{
-structype = driver(format);
-if (structype)
-{
-q[0] = '%';
-q[1] = format[1];
-written += structype(q, pa);
+	for (i = 0; format[i] != '\0'; i++)
+	{
+		if (format[i] == '%')
+		{
+			if (!format[i])
+				return (-1);
+			switch (format[i + 1])
+			{
+			case 'c':
+				c = (char)va_arg(args, int), _putchar(c), i++;
+				break;
+			case 's':
+				so_len += print_str(args), so_len--, i++;
+				break;
+			case '%':
+				_putchar('%'), i++;
+				break;
+			case '\0':
+				so_len = -2;
+				break;
+			case 'd':
+			case 'i':
+				so_len += print_int(args), so_len--;
+				break;
+			case 'R':
+				so_len += print_rot13(args), so_len--, i++;
+				break;
+			case 'u':
+                                so_len += print_u(args), so_len--, i++;
+                                break;
+			case 'o':
+                                so_len += print_o(args), so_len--, i++;
+                                break;
+			case 'b':
+                                so_len += print_b (args), so_len--, i++;
+                                break;
+			case 'x':
+                                so_len += print_x (args), so_len--, i++;
+                                break;
+			case 'X':
+                                so_len += print_X (args), so_len--, i++;
+                                break;
+			case 'p':
+                                so_len += print_p (args), so_len--, i++;
+                                break;
+			case 'S':
+                                so_len += print_S (args), so_len--, i++;
+                                break;
+			case 'r':
+                                so_len += print_r (args), so_len--, i++;
+                                break;
+
+
+			default:
+				_putchar('%');
+				break;
+			}
+		}
+		else
+			_putchar(format[i]);
+		so_len++;
+	}
+	return (so_len);
 }
-else if (format[1] != '\0')
+
+/**
+ * _printf - prints anything
+ * @format: list of argument types passed to the function
+ *
+ * Return: number of characters printed
+ */
+int _printf(const char *format, ...)
 {
-written += _putchar('%');
-written += _putchar(format[1]);
-}
-else
-{
-written += _putchar('%');
-break;
-}
-format += 2;
-}
-else
-{
-written += _putchar(format[0]);
-format++;
-}
-}
-_putchar(-2);
-return (written);
+	int so_len;
+	va_list arg_ptr;
+
+	va_start(arg_ptr, format);
+	if (format == NULL)
+		return (-1);
+	so_len = arg_printer(arg_ptr, format);
+	va_end(arg_ptr);
+	return (so_len);
 }
